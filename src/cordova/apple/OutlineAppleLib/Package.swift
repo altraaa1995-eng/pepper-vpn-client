@@ -82,7 +82,11 @@ let package = Package(
         ),
         .testTarget(
             name: "OutlineTunnelTest",
-            dependencies: ["OutlineTunnel", "PacketTunnelProvider"]
+            dependencies: ["OutlineTunnel", "PacketTunnelProvider"],
+            // The gomobile-built Tun2socks framework references libresolv
+            // symbols (res_9_ninit/res_9_nsearch/res_9_nclose) from Go's cgo
+            // DNS resolver; link them explicitly to avoid undefined symbols.
+            linkerSettings: [.linkedLibrary("resolv.9")]
         ),
     ]
 )
