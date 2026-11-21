@@ -17,7 +17,7 @@ on:
 jobs:
   web_test:
     name: Web Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -49,7 +49,7 @@ jobs:
 
   linux_debug_build:
     name: Linux Debug Build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: web_test
     steps:
@@ -76,7 +76,7 @@ jobs:
 
   windows_debug_build:
     name: Windows Debug Build
-    runs-on: windows-2019
+    runs-on: windows-latest
     timeout-minutes: 10
     needs: web_test
     steps:
@@ -106,7 +106,7 @@ jobs:
 
   macos_debug_build:
     name: MacOS Debug Build
-    runs-on: macos-13
+    runs-on: macos-15
     timeout-minutes: 20
     needs: web_test
     steps:
@@ -148,7 +148,7 @@ jobs:
 
   ios_debug_build:
     name: iOS Debug Build
-    runs-on: macos-13
+    runs-on: macos-15
     timeout-minutes: 20
     needs: web_test
     steps:
@@ -190,7 +190,7 @@ jobs:
 
   maccatalyst_debug_build:
     name: Mac Catalyst Debug Build
-    runs-on: macos-13
+    runs-on: macos-15
     timeout-minutes: 20
     needs: web_test
     steps:
@@ -232,7 +232,7 @@ jobs:
 
   android_debug_build:
     name: Android Debug Build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: web_test
     steps:
