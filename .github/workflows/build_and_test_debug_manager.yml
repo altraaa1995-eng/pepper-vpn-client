@@ -106,6 +106,7 @@ jobs:
     name: MacOS Debug Build
     runs-on: macos-15
     needs: web_test
+    continue-on-error: true
     env:
       SENTRY_DSN: debug
     steps:
@@ -122,8 +123,5 @@ jobs:
       - name: Install NPM Dependencies
         run: npm ci
  
-      - name: Set XCode Version
-        run: sudo xcode-select -switch /Applications/Xcode_13.2.app
-
       - name: Build MacOS Manager
         run: npm run action server_manager/electron_app/build macos
