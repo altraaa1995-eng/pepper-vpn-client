@@ -112,7 +112,7 @@ jobs:
   macos_debug_build:
     name: MacOS Debug Build
     runs-on: macos-15
-    timeout-minutes: 20
+    timeout-minutes: 40
     needs: web_test
     steps:
       - name: Display XCode
@@ -154,7 +154,7 @@ jobs:
   ios_debug_build:
     name: iOS Debug Build
     runs-on: macos-15
-    timeout-minutes: 20
+    timeout-minutes: 40
     needs: web_test
     steps:
       - name: Display XCode
@@ -196,7 +196,7 @@ jobs:
   maccatalyst_debug_build:
     name: Mac Catalyst Debug Build
     runs-on: macos-15
-    timeout-minutes: 20
+    timeout-minutes: 40
     needs: web_test
     steps:
       - name: Display XCode
