@@ -5,6 +5,7 @@ import readline from "node:readline/promises";
 import { Agent } from "./src/agent.js";
 import { MistralClient } from "./src/mistral.js";
 import { Tools } from "./src/tools.js";
+import { createTermuxTools } from "./src/termux.js";
 
 function loadEnv(dir) {
   const envPath = path.join(dir, ".env");
@@ -73,7 +74,11 @@ async function main() {
     }
   };
 
-  const tools = new Tools(flags.root, { confirm });
+  const termuxTools = createTermuxTools();
+  if (termuxTools.length) {
+    console.error(`Termux:API detected — ${termuxTools.length} phone tools enabled (notify, speak, battery)`);
+  }
+  const tools = new Tools(flags.root, { confirm, extraTools: termuxTools });
   const agent = new Agent(client, tools);
 
   const instruction = flags.task.join(" ").trim();

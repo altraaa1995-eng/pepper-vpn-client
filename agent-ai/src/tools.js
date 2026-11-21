@@ -8,9 +8,10 @@ const execFileAsync = promisify(execFile);
 export class ToolError extends Error {}
 
 export class Tools {
-  constructor(rootDir, { confirm } = {}) {
+  constructor(rootDir, { confirm, extraTools } = {}) {
     this.rootDir = path.resolve(rootDir);
     this.confirm = confirm ?? (() => Promise.resolve(true));
+    this.extraTools = extraTools ?? [];
   }
 
   resolveSafe(relPath) {
@@ -22,7 +23,7 @@ export class Tools {
   }
 
   list() {
-    return [
+    return [...this.extraTools.map((t) => t.def),
       {
         name: "list_files",
         description: "List files and directories, recursively, under the project root.",
@@ -71,6 +72,14 @@ export class Tools {
   }
 
   async execute(name, args) {
+    const extra = this.extraTools.find((t) => t.def.name === name);
+    if (extra) {
+      try {
+        return await extra.run(args);
+      } catch (err) {
+        throw new ToolError(err.message);
+      }
+    }
     switch (name) {
       case "list_files":
         return this.listFiles(args.path ?? ".");
