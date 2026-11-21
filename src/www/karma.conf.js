@@ -26,7 +26,7 @@ module.exports = async function(config) {
     },
     browsers: ['ChromiumHeadlessNoSandbox'],
     colors: true,
-    files: ['environment.json', '**/*.spec.ts'],
+    files: [{pattern: 'environment.json', included: false}, '**/*.spec.ts'],
     proxies: {
       '/environment.json': '/base/environment.json',
     },
