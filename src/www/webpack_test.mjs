@@ -21,7 +21,7 @@ export default merge(baseConfig, {
         // @web/test-runner-commands resolves a dynamic data: URL import at runtime;
         // mark it as webpackIgnore so bundling does not fail.
         test: /commands\.mjs$/,
-        include: /node_modules[\\/]@web[\/]test-runner-commands/,
+        include: /node_modules[\\/]@web[\\/]test-runner-commands/,
         enforce: 'pre',
         use: [new URL('./patches/webpack-ignore-data-imports.cjs', import.meta.url).pathname],
       },
