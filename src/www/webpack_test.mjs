@@ -18,6 +18,14 @@ export default merge(baseConfig, {
   module: {
     rules: [
       {
+        // @web/test-runner-commands resolves a dynamic data: URL import at runtime;
+        // mark it as webpackIgnore so bundling does not fail.
+        test: /commands\.mjs$/,
+        include: /node_modules[\\/]@web[\\/]test-runner-commands/,
+        enforce: 'pre',
+        use: [new URL('./patches/webpack-ignore-data-imports.cjs', import.meta.url).pathname],
+      },
+      {
         test: /\.m?ts$/,
         exclude: /node_modules/,
         use: [TS_LOADER],

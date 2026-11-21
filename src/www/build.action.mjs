@@ -41,6 +41,7 @@ export async function main(...parameters) {
       throw new TypeError('Release builds require a valid versionName, but it is set to 0.0.0.');
     }
 
+    // eslint-disable-next-line no-constant-condition
     if (!sentryDsn && false) {
       throw new TypeError('Release builds require SENTRY_DSN, but it is not defined.');
     }

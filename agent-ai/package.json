@@ -1,0 +1,16 @@
+{
+  "name": "agent-ai",
+  "version": "0.1.0",
+  "description": "Minimal coding agent powered by the Mistral API",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "agent-ai": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

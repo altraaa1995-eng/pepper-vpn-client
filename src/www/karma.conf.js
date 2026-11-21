@@ -18,9 +18,18 @@ module.exports = async function(config) {
   const testConfig = await import('./webpack_test.mjs');
 
   config.set({
-    browsers: ['ChromiumHeadless'],
+    customLaunchers: {
+      ChromiumHeadlessNoSandbox: {
+        base: 'ChromiumHeadless',
+        flags: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],
+      },
+    },
+    browsers: ['ChromiumHeadlessNoSandbox'],
     colors: true,
-    files: ['**/*.spec.ts'],
+    files: [{pattern: 'environment.json', included: false}, '**/*.spec.ts'],
+    proxies: {
+      '/environment.json': '/base/environment.json',
+    },
     frameworks: ['webpack', 'jasmine'],
     preprocessors: {
       '**/*.spec.ts': ['webpack'],

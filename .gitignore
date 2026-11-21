@@ -29,3 +29,4 @@ tools/smartdnsblock/bin/*
 !tools/smartdnsblock/bin/*.exe
 universal.apk
 xcuserdata/
+dist/
