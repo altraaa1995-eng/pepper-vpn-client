@@ -260,9 +260,10 @@ jobs:
           go-version-file: '${{ github.workspace }}/go.mod'
 
       - name: Install Java
-        uses: actions/setup-java@v1.4.3
+        uses: actions/setup-java@v4
         with:
-          java-version: 11
+          distribution: temurin
+          java-version: 17
 
       - name: Setup Android
         run: bash ./tools/build/setup_linux_android.sh

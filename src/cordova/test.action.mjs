@@ -57,7 +57,9 @@ export async function main(...parameters) {
     '-destination',
     outlinePlatform === 'macos'
       ? `platform=macOS,arch=${os.machine()}`
-      : `platform=iOS Simulator,OS=16.2,name=iPhone SE (3rd generation)`,
+      : outlinePlatform === 'maccatalyst'
+        ? `platform=macOS,variant=Mac Catalyst,arch=${os.machine()}`
+        : `platform=iOS Simulator,name=iPhone SE (3rd generation)`,
     '-workspace',
     path.join(APPLE_ROOT, APPLE_LIBRARY_NAME),
     '-enableCodeCoverage',

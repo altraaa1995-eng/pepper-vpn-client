@@ -10,6 +10,8 @@ let package = Package(
         // CocoaLumberjack 3.8.0 dropped support for iOS < 11 and macOS < 10.13.
         // See https://github.com/CocoaLumberjack/CocoaLumberjack/releases/tag/3.8.0.
         // These cannot be upgraded without also upgrading the entire project.
+        // Newer releases require higher platform versions (3.9.0 needs iOS 12,
+        // 3.10.0 needs macOS 12 and iOS 15), so keep the 3.8.x line pinned.
        .iOS(.v11),
        .macOS(.v10_14),
     ],
@@ -28,7 +30,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", from: "3.7.4"),
+        .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack.git", "3.8.0"..<"3.9.0"),
         .package(url: "https://github.com/getsentry/sentry-cocoa", from: "7.31.3"),
     ],
     targets: [
