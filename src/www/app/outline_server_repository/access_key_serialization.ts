@@ -108,7 +108,7 @@ export async function fetchSessionConfig(configLocation: URL): Promise<Shadowsoc
   configLocation = new URL(fixedConfigLocation);
   configLocation.searchParams.append('type', '1')
   const envVars = await onceEnvVars;
-  const options: any = {
+  const options: RequestInit = {
     cache: 'no-store',
     redirect: 'follow',
     //headers: {'Accept': 'application/json'},
