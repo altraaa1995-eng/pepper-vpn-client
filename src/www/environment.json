@@ -1,0 +1,5 @@
+{
+  "APP_VERSION": "0.0.0",
+  "APP_BUILD_NUMBER": "0",
+  "SENTRY_DSN": "debug"
+}

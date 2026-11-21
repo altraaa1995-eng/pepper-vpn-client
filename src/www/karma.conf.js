@@ -26,7 +26,10 @@ module.exports = async function(config) {
     },
     browsers: ['ChromiumHeadlessNoSandbox'],
     colors: true,
-    files: ['**/*.spec.ts'],
+    files: ['environment.json', '**/*.spec.ts'],
+    proxies: {
+      '/environment.json': '/base/environment.json',
+    },
     frameworks: ['webpack', 'jasmine'],
     preprocessors: {
       '**/*.spec.ts': ['webpack'],
