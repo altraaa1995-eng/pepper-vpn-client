@@ -102,7 +102,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
   self.hostNetworkAddress =
       [self getNetworkIpAddress:[self.tunnelConfig.config[@"host"] UTF8String]];
   if (self.hostNetworkAddress == nil) {
-    [self execAppCallbackForAction:kActionStart errorCode:illegalServerConfiguration];
+    [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeIllegalServerConfiguration];
     return completionHandler([NSError errorWithDomain:NEVPNErrorDomain
                                                  code:NEVPNErrorConfigurationReadWriteFailed
                                              userInfo:nil]);
@@ -114,7 +114,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
   // network unusable with no indication to the user. By bypassing the checks, the network would
   // still be unusable, but at least the user will have a visual indication that Outline is the
   // culprit and can explicitly disconnect.
-  long errorCode = noError;
+  long errorCode = ErrorCodeNoError;
   if (!isOnDemand && [self.tunnelConfig.tunnelType isEqualToString:@"ss"]) {
     ShadowsocksClient* client = [self getClient];
     if (client == nil) {
@@ -124,7 +124,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
     }
     ShadowsocksCheckConnectivity(client, &errorCode, nil);
   }
-  if (errorCode != noError && errorCode != udpRelayNotEnabled) {
+  if (errorCode != ErrorCodeNoError && errorCode != ErrorCodeUdpRelayNotEnabled) {
     [self execAppCallbackForAction:kActionStart errorCode:errorCode];
     return completionHandler([NSError errorWithDomain:NEVPNErrorDomain
                                                  code:NEVPNErrorConnectionFailed
@@ -134,13 +134,13 @@ NSString *const kDefaultPathKey = @"defaultPath";
   [self connectTunnel:[OutlineTunnel getTunnelNetworkSettingsWithTunnelRemoteAddress:self.hostNetworkAddress]
            completion:^(NSError *_Nullable error) {
              if (error != nil) {
-               [self execAppCallbackForAction:kActionStart errorCode:vpnPermissionNotGranted];
+               [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeVpnPermissionNotGranted];
                return completionHandler(error);
              }
              BOOL isUdpSupported =
-                 isOnDemand ? self.tunnelStore.isUdpSupported : errorCode == noError;
+                 isOnDemand ? self.tunnelStore.isUdpSupported : errorCode == ErrorCodeNoError;
              if (![self startTun2Socks:isUdpSupported]) {
-               [self execAppCallbackForAction:kActionStart errorCode:vpnStartFailure];
+               [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeVpnStartFailure];
                return completionHandler([NSError errorWithDomain:NEVPNErrorDomain
                                                             code:NEVPNErrorConnectionFailed
                                                         userInfo:nil]);
@@ -149,7 +149,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
              [self.tunnelStore save:tunnelConfig];
              self.tunnelStore.isUdpSupported = isUdpSupported;
              self.tunnelStore.status = TunnelStatusConnected;
-             [self execAppCallbackForAction:kActionStart errorCode:noError];
+             [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeNoError];
              completionHandler(nil);
            }];
 }
@@ -166,7 +166,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
   [self stopListeningForNetworkChanges];
   [self.tunnel disconnect];
   [self cancelTunnelWithError:nil];
-  [self execAppCallbackForAction:kActionStop errorCode:noError];
+  [self execAppCallbackForAction:kActionStop errorCode:ErrorCodeNoError];
   completionHandler();
 }
 
@@ -390,14 +390,14 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
 - (void)reconnectTunnel:(bool)configChanged {
   if (!self.tunnelConfig || !self.tunnel) {
     DDLogError(@"Failed to reconnect tunnel, missing tunnel configuration.");
-    [self execAppCallbackForAction:kActionStart errorCode:illegalServerConfiguration];
+    [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeIllegalServerConfiguration];
     return;
   }
   const char *hostAddress = (const char *)[self.tunnelConfig.config[@"host"] UTF8String];
   NSString *activeHostNetworkAddress = [self getNetworkIpAddress:hostAddress];
   if (!activeHostNetworkAddress) {
     DDLogError(@"Failed to retrieve the remote host IP address in the network");
-    [self execAppCallbackForAction:kActionStart errorCode:illegalServerConfiguration];
+    [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeIllegalServerConfiguration];
     return;
   }
   if (!configChanged && [activeHostNetworkAddress isEqualToString:self.hostNetworkAddress]) {
@@ -413,18 +413,18 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
 
   DDLogInfo(@"Configuration or host IP address changed with the network. Reconnecting tunnel.");
   self.hostNetworkAddress = activeHostNetworkAddress;
-  long errorCode = noError;
+  long errorCode = ErrorCodeNoError;
   if ([self.tunnelConfig.tunnelType isEqualToString:@"ss"]) {
     ShadowsocksClient* client = [self getClient];
     if (client == nil) {
-      [self execAppCallbackForAction:kActionStart errorCode:illegalServerConfiguration];
+      [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeIllegalServerConfiguration];
       [self cancelTunnelWithError:[NSError errorWithDomain:NEVPNErrorDomain
                                                       code:NEVPNErrorConfigurationInvalid
                                                   userInfo:nil]];
       return;
     }
     ShadowsocksCheckConnectivity(client, &errorCode, nil);
-    if (errorCode != noError && errorCode != udpRelayNotEnabled) {
+    if (errorCode != ErrorCodeNoError && errorCode != ErrorCodeUdpRelayNotEnabled) {
       DDLogError(@"Connectivity checks failed. Tearing down VPN");
       [self execAppCallbackForAction:kActionStart errorCode:errorCode];
       [self cancelTunnelWithError:[NSError errorWithDomain:NEVPNErrorDomain
@@ -433,10 +433,10 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
       return;
     }
   }
-  BOOL isUdpSupported = errorCode == noError;
+  BOOL isUdpSupported = errorCode == ErrorCodeNoError;
   if (![self startTun2Socks:isUdpSupported]) {
     DDLogError(@"Failed to reconnect tunnel. Tearing down VPN");
-    [self execAppCallbackForAction:kActionStart errorCode:vpnStartFailure];
+    [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeVpnStartFailure];
     [self cancelTunnelWithError:[NSError errorWithDomain:NEVPNErrorDomain
                                                     code:NEVPNErrorConnectionFailed
                                                 userInfo:nil]];
@@ -445,13 +445,13 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
   [self connectTunnel:[OutlineTunnel getTunnelNetworkSettingsWithTunnelRemoteAddress:self.hostNetworkAddress]
            completion:^(NSError *_Nullable error) {
              if (error != nil) {
-               [self execAppCallbackForAction:kActionStart errorCode:vpnStartFailure];
+               [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeVpnStartFailure];
                [self cancelTunnelWithError:error];
                return;
              }
              self.tunnelStore.isUdpSupported = isUdpSupported;
              [self.tunnelStore save:self.tunnelConfig];
-             [self execAppCallbackForAction:kActionStart errorCode:noError];
+             [self execAppCallbackForAction:kActionStart errorCode:ErrorCodeNoError];
            }];
 }
 
